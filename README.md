@@ -54,6 +54,10 @@ Everything is Jetpack Compose, dark-only (a white UI would destroy your night vi
 point of a flashlight app). The visual language borrows shadcn/ui: near-black `#09090B` background,
 `#18181B` surfaces, hairline `#27272A` borders, one amber accent (`#FBBF24`) and generous 22 dp radii.
 
+**See it without building:** open [`preview/index.html`](preview/index.html) in any browser (or run
+`python3 -m http.server -d preview 8000`). It is a self-contained mock of the same design — tap the
+dial, flip the switch, drag the slider and open the settings sheet to feel the button/sliding effects.
+
 **Home screen**
 
 - **Header** — logo mark, "ShakeFlash / Shake to flashlight", settings button.
@@ -326,6 +330,11 @@ swipe ShakeFlash out of Recents, shake again.
 | Recents swipe → shake | still toggles |
 | Toggle service off | notification disappears, shaking does nothing, reboot does not restore it |
 | Reboot with service on | notification returns after boot |
+
+**What was already verified in CI-less environments:** the Kotlin sources were parsed with the real
+Kotlin compiler (no syntax errors), and `ShakeProcessor` + `ShakeProcessorTest` were compiled and
+executed directly — 10/10 behavioural tests pass. A full APK build needs the Android SDK, which is
+why the GitHub Actions workflow exists.
 
 **Emulator:** `Extended controls ▸ Virtual sensors ▸ Device pose` and rotate/move the device to feed
 the accelerometer; or use the *Accelerometer* tab's virtual values.
