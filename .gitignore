@@ -1,0 +1,24 @@
+# Gradle / Android Studio
+.gradle/
+build/
+app/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.iml
+.idea/
+.kotlin/
+
+# Keystores & signing secrets  (never commit these)
+*.jks
+*.keystore
+keystore.properties
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Output artifacts
+*.apk
+*.aab
