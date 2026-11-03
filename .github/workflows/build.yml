@@ -79,16 +79,25 @@ jobs:
       - name: Publish failure details
         if: failure()
         run: |
-          if [ -f build.log ]; then
-            echo "===== last 80 lines of the Gradle build ====="
-            tail -n 80 build.log
-            # Annotations are readable through the API even when raw logs are not.
-            tail -n 25 build.log | while IFS= read -r line; do
-              echo "::error title=Gradle output::$line"
-            done
-          else
+          if [ ! -f build.log ]; then
             echo "::error title=Gradle output::build.log missing - failure happened before Gradle ran"
+            exit 0
           fi
+
+          echo "===== Gradle failure summary ====="
+          awk '/^FAILURE: Build failed/,/^\* Try/' build.log | head -40 || true
+          echo "===== compiler / resolution errors ====="
+          grep -nE "^(e|w): |^error:|Caused by:|Could not |Unsupported |SDK location|AAPT|Execution failed|> " build.log | head -60 || true
+          echo "===== tail ====="
+          tail -n 30 build.log
+
+          # Raw logs are not reachable from some environments, but annotations are.
+          {
+            awk '/^FAILURE: Build failed/,/^\* Try/' build.log | head -12
+            grep -E "^(e|w): |^error:|Caused by:|Could not |Unsupported |SDK location|AAPT|Execution failed for task" build.log | head -28
+          } | sed -e 's/\r//g' -e 's/%/%25/g' | while IFS= read -r line; do
+            [ -n "$line" ] && echo "::error title=Gradle ::$line"
+          done
 
       - name: Upload build log
         if: always()

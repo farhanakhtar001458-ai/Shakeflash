@@ -67,7 +67,7 @@ class FlashlightService : Service() {
         ServiceState.setRunning(true)
 
         serviceScope.launch {
-            settingsRepository.settings.collect(::onSettingsChanged)
+            settingsRepository.settings.collect { onSettingsChanged(it) }
         }
         serviceScope.launch {
             flashlight.state.collect { updateNotification() }
