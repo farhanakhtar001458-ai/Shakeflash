@@ -9,10 +9,18 @@ on:
 permissions:
   contents: read
 
+# GitHub-hosted Ubuntu runners already ship a full Android SDK at this location.
+# We use it directly instead of relying on an external SDK-setup action.
+env:
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+
 jobs:
   build:
     name: Assemble debug + release APKs
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,23 +31,36 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Set up Gradle (with caching)
         uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          if [ ! -d "$ANDROID_HOME" ]; then
+            echo "::error::Android SDK not found at $ANDROID_HOME"
+            exit 1
+          fi
+          SDKMANAGER="$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -1)"
+          echo "sdkmanager=$SDKMANAGER"
+          if [ -n "$SDKMANAGER" ]; then
+            # Licences are usually pre-accepted on hosted runners; ignore failures here and
+            # let AGP's own SDK downloader fetch whatever is missing.
+            (yes | "$SDKMANAGER" --licenses >/dev/null 2>&1) || true
+            "$SDKMANAGER" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0" 2>&1 | tail -5 || true
+          fi
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          ls "$ANDROID_HOME/platforms" 2>/dev/null || true
+          java -version
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Unit tests
-        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
-
-      - name: Build debug APK
-        run: ./gradlew --no-daemon --stacktrace assembleDebug
-
-      - name: Build release APK
-        run: ./gradlew --no-daemon --stacktrace assembleRelease
+      - name: Unit tests + assemble debug & release
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon --stacktrace --console=plain \
+            testDebugUnitTest assembleDebug assembleRelease 2>&1 | tee build.log
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
@@ -54,6 +75,28 @@ jobs:
           name: ShakeFlash-release-apk
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Publish failure details
+        if: failure()
+        run: |
+          if [ -f build.log ]; then
+            echo "===== last 80 lines of the Gradle build ====="
+            tail -n 80 build.log
+            # Annotations are readable through the API even when raw logs are not.
+            tail -n 25 build.log | while IFS= read -r line; do
+              echo "::error title=Gradle output::$line"
+            done
+          else
+            echo "::error title=Gradle output::build.log missing - failure happened before Gradle ran"
+          fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Upload unit-test report
         if: always()
