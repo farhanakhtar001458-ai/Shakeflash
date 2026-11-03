@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Compose owns the actual styling. This framework theme only prevents a white flash
+      before the first frame and lets the app draw edge-to-edge behind the system bars.
+    -->
+    <style name="Theme.ShakeFlash" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:colorAccent">#FFFBBF24</item>
+    </style>
+</resources>

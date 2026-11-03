@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      ShakeFlash has no INTERNET permission at all: shake detection and the torch are
+      fully on-device. Nothing is collected, logged or uploaded.
+    -->
+
+    <!-- Torch control. setTorchMode() technically works without it on most devices,
+         but several OEM camera HALs require the permission for the torch to be usable,
+         so we ask for it and gate the core feature on it. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
+    <!-- Ongoing notification for the foreground service (runtime permission on 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Foreground service + its Android 14+ "specialUse" type. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Restore the service after a reboot / app update. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Haptic confirmation when a shake is registered. Normal permission, no dialog. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Hardware is optional so the app still installs on tablets/emulators without a flash. -->
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="false" />
+
+    <application
+        android:name=".ShakeFlashApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ShakeFlash"
+        android:usesCleartextTraffic="false"
+        tools:targetApi="35">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ShakeFlash"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          stopWithTask="false"  -> the service keeps running when the task is swiped
+                                   away from the Recent Apps screen.
+          foregroundServiceType="specialUse" -> required from Android 14 (API 34);
+                                   a sensor-driven torch toggle does not fit any of the
+                                   predefined FGS types.
+        -->
+        <service
+            android:name=".service.FlashlightService"
+            android:directBootAware="false"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:stopWithTask="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps accelerometer shake detection alive so the flashlight can be toggled while the app is closed, the screen is locked, or another app is in the foreground." />
+        </service>
+
+        <!-- Boot / update restoration. Only starts the service if the user left it enabled. -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:directBootAware="false"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

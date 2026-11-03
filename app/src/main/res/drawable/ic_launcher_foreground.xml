@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon foreground: amber bolt inside a soft glow. Content stays inside the 72dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#26FBBF24"
+        android:pathData="M54,20a34,34 0 1,0 0.1,0z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M58,20L34,60h15l-5,30l29,-44H57z" />
+    <path
+        android:fillColor="#FDE68A"
+        android:pathData="M58,20L34,60h9L58,20z" />
+</vector>

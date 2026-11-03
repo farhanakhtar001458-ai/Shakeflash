@@ -1,0 +1,2 @@
+# Copy to local.properties and point at your own SDK (Android Studio does this automatically)
+sdk.dir=/Users/you/Library/Android/sdk

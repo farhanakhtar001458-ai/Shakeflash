@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShakeFlash</string>
+
+    <!-- Notification -->
+    <string name="notification_channel_service_name">Shake detection</string>
+    <string name="notification_channel_service_description">Ongoing notification that keeps shake detection alive.</string>
+    <string name="notification_title_on">Flashlight is ON</string>
+    <string name="notification_title_off">Listening for a shake</string>
+    <string name="notification_text_on">Shake the phone again to turn it off.</string>
+    <string name="notification_text_off">Shake the phone to turn the flashlight on.</string>
+    <string name="notification_action_toggle_on">Turn off</string>
+    <string name="notification_action_toggle_off">Turn on</string>
+    <string name="notification_action_stop">Stop</string>
+    <string name="notification_title_stopped">Shake detection stopped</string>
+    <string name="notification_text_stopped">Open ShakeFlash and turn shake detection back on.</string>
+
+    <!-- Service -->
+    <string name="torch_unavailable">This device has no usable flashlight</string>
+    <string name="torch_busy">The camera is busy — close other camera apps and try again</string>
+    <string name="camera_permission_required">Camera permission is required to control the flashlight</string>
+    <string name="sensor_unavailable">No accelerometer found on this device</string>
+    <string name="service_start_failed">Android blocked the service from starting in the background</string>
+    <string name="msg_camera_permission_needed">Give camera permission first, then enable shake detection.</string>
+    <string name="msg_service_blocked">Android blocked the background service from starting. Open the app and try again.</string>
+    <string name="msg_torch_unknown">Could not control the flashlight on this device.</string>
+</resources>
