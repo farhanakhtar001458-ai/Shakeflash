@@ -67,8 +67,10 @@ class FlashlightController(context: Context) {
     }
 
     init {
-        if (cameraManager != null && cameraId != null) {
-            runCatching { cameraManager.registerTorchCallback(torchCallback, mainHandler) }
+        val manager = cameraManager
+        val id = cameraId
+        if (manager != null && id != null) {
+            runCatching { manager.registerTorchCallback(torchCallback, mainHandler) }
                 .onFailure { Log.w(TAG, "Could not register torch callback", it) }
         }
     }

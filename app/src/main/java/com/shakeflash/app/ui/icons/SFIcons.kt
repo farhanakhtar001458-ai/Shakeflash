@@ -15,20 +15,18 @@ import androidx.compose.ui.unit.dp
  */
 object SFIcons {
 
-    private fun icon(name: String, builder: ImageVector.Builder.() -> ImageVector.Builder): ImageVector =
-        builder(
-            ImageVector.Builder(
-                name = name,
-                defaultWidth = 24.dp,
-                defaultHeight = 24.dp,
-                viewportWidth = 24f,
-                viewportHeight = 24f,
-            ),
-        ).build()
+    private fun icon(name: String, builder: ImageVector.Builder.() -> Unit): ImageVector =
+        ImageVector.Builder(
+            name = name,
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply(builder).build()
 
     val Flashlight: ImageVector by lazy {
-        icon("Flashlight") { b ->
-            b.path(fill = SolidColor(Color.White)) {
+        icon("Flashlight") {
+            path(fill = SolidColor(Color.White)) {
                 moveTo(7f, 2f)
                 verticalLineToRelative(11f)
                 horizontalLineToRelative(3f)
@@ -42,8 +40,8 @@ object SFIcons {
     }
 
     val Power: ImageVector by lazy {
-        icon("Power") { b ->
-            b.path(
+        icon("Power") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 2f,
                 strokeLineCap = StrokeCap.Round,
@@ -51,7 +49,7 @@ object SFIcons {
                 moveTo(12f, 3.5f)
                 lineTo(12f, 11f)
             }
-            b.path(
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 2f,
                 strokeLineCap = StrokeCap.Round,
@@ -66,8 +64,8 @@ object SFIcons {
     }
 
     val Wave: ImageVector by lazy {
-        icon("Wave") { b ->
-            b.path(
+        icon("Wave") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 2f,
                 strokeLineCap = StrokeCap.Round,
@@ -85,8 +83,8 @@ object SFIcons {
     }
 
     val Shield: ImageVector by lazy {
-        icon("Shield") { b ->
-            b.path(
+        icon("Shield") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 1.8f,
                 strokeLineJoin = StrokeJoin.Round,
@@ -103,8 +101,8 @@ object SFIcons {
     }
 
     val Battery: ImageVector by lazy {
-        icon("Battery") { b ->
-            b.path(
+        icon("Battery") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 1.7f,
                 strokeLineJoin = StrokeJoin.Round,
@@ -117,7 +115,7 @@ object SFIcons {
                 moveTo(19.5f, 10f)
                 lineTo(19.5f, 14f)
             }
-            b.path(fill = SolidColor(Color.White)) {
+            path(fill = SolidColor(Color.White)) {
                 moveTo(5.5f, 10.5f)
                 lineTo(11f, 10.5f)
                 lineTo(11f, 13.5f)
@@ -128,8 +126,8 @@ object SFIcons {
     }
 
     val ChevronRight: ImageVector by lazy {
-        icon("ChevronRight") { b ->
-            b.path(
+        icon("ChevronRight") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 2f,
                 strokeLineCap = StrokeCap.Round,
@@ -143,8 +141,8 @@ object SFIcons {
     }
 
     val Bolt: ImageVector by lazy {
-        icon("Bolt") { b ->
-            b.path(
+        icon("Bolt") {
+            path(
                 stroke = SolidColor(Color.White),
                 strokeLineWidth = 2f,
                 strokeLineCap = StrokeCap.Round,
